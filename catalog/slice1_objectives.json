@@ -12,9 +12,9 @@
           "minimum_amount": 1.0
         },
         {
-          "kind": "connected_waste_output",
-          "resource_id": "dirty_water",
-          "required": true
+          "kind": "completed_recipe",
+          "recipe_id": "sink_dirty_water",
+          "minimum_runs": 1
         }
       ],
       "tags": ["slice1", "certification", "iron_route"]

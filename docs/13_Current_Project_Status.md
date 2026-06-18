@@ -10,47 +10,50 @@ React Flow prototype.
 
 ## Current Phase
 
-Slice 1 catalog review.
+Ready for Task 0003 catalog loading and validation.
 
 ## Current Task
 
-Task ID: 0002
+Task ID: 0003
 
-Task Title: Review and refine Slice 1 production catalog
+Task Title: Catalog Loading and Validation
 
-Status: Approved
+Status: Proposed
 
 ## Last Accepted Task
 
-Task ID: 0001
+Task ID: 0002
 
-Summary: Bootstrapped repo-based project control files, Slice 1 catalog drafts, task packets, notes, handoff template, and README operating model.
+Summary: Reviewed and accepted the Slice 1 production catalog. Accepted corrections are: crusher input accepts only `iron_ore`, and Basic Iron Certification requires completing the `sink_dirty_water` recipe.
 
-Commit: PR #1 merged into main.
+Commit: PR #4.
 
 ## Next Candidate Tasks
 
-1. Complete Task 0002 catalog review.
-2. Apply approved catalog corrections if needed.
-3. Implement Task 0003 catalog loading and validation.
-4. Implement typed port compatibility.
+1. Run Task 0003: Catalog Loading and Validation.
+2. Implement typed port compatibility.
+3. Design minimal Slice 1 diagnostics schema and ownership.
 
 ## Current Blockers
 
-- None. Bootstrap baseline has been merged.
+- None.
 
 ## Active Decisions
 
 - Repository is source of truth.
 - React Flow remains active prototype path.
 - Production domain must remain renderer-independent.
+- Slice 1 catalog corrections accepted for Task 0002:
+  - crusher input accepts only `iron_ore`;
+  - Basic Iron Certification requires completing `sink_dirty_water`.
 
 ## Drift Risks
 
 - Premature desktop stack decision.
 - Adding late-game materials before Slice 1.
 - Coupling production logic directly to React Flow components.
-- Letting catalog review become implementation work.
+- Letting catalog loading become gameplay implementation.
+- Adding diagnostics schema without a bounded Slice 1 design decision.
 
 ## Parking Lot Highlights
 
@@ -59,4 +62,4 @@ Commit: PR #1 merged into main.
 
 ## Next Director Action
 
-Run Task 0002: Review and refine the Slice 1 production catalog.
+Run Task 0003: Catalog Loading and Validation.

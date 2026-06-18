@@ -38,7 +38,7 @@
           "direction": "input",
           "kind": "resource",
           "accepted_states": ["solid"],
-          "accepted_tags": ["ore"],
+          "accepted_resources": ["iron_ore"],
           "required": true
         },
         {
