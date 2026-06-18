@@ -10,33 +10,34 @@ React Flow prototype.
 
 ## Current Phase
 
-Project bootstrap.
+Slice 1 catalog review.
 
 ## Current Task
 
-Task ID: 0001
+Task ID: 0002
 
-Task Title: Bootstrap project control files
+Task Title: Review and refine Slice 1 production catalog
 
-Status: In Review
+Status: Approved
 
 ## Last Accepted Task
 
-Task ID: None yet.
+Task ID: 0001
 
-Summary: N/A
+Summary: Bootstrapped repo-based project control files, Slice 1 catalog drafts, task packets, notes, handoff template, and README operating model.
 
-Commit: N/A
+Commit: PR #1 merged into main.
 
 ## Next Candidate Tasks
 
-1. Draft Slice 1 production catalog.
-2. Implement catalog loading and validation.
-3. Implement typed port compatibility.
+1. Complete Task 0002 catalog review.
+2. Apply approved catalog corrections if needed.
+3. Implement Task 0003 catalog loading and validation.
+4. Implement typed port compatibility.
 
 ## Current Blockers
 
-- Baseline project-control PR needs director review and merge.
+- None. Bootstrap baseline has been merged.
 
 ## Active Decisions
 
@@ -49,6 +50,7 @@ Commit: N/A
 - Premature desktop stack decision.
 - Adding late-game materials before Slice 1.
 - Coupling production logic directly to React Flow components.
+- Letting catalog review become implementation work.
 
 ## Parking Lot Highlights
 
@@ -57,4 +59,4 @@ Commit: N/A
 
 ## Next Director Action
 
-Review and merge the bootstrap project-control baseline.
+Run Task 0002: Review and refine the Slice 1 production catalog.
