@@ -1,0 +1,78 @@
+{
+  "version": 1,
+  "recipes": [
+    {
+      "id": "burn_coal_for_power",
+      "display_name": "Burn Coal for Power",
+      "process_family": "generation",
+      "machine_class": "generator",
+      "inputs": [
+        { "resource_id": "coal", "amount": 1.0 }
+      ],
+      "outputs": [
+        { "resource_id": "power", "amount": 10.0, "output_kind": "power" }
+      ],
+      "duration_seconds": 1.0,
+      "tags": ["power", "slice1"]
+    },
+    {
+      "id": "crush_iron_ore",
+      "display_name": "Crush Iron Ore",
+      "process_family": "crushing",
+      "machine_class": "crusher",
+      "inputs": [
+        { "resource_id": "iron_ore", "amount": 1.0 },
+        { "resource_id": "power", "amount": 1.0 }
+      ],
+      "outputs": [
+        { "resource_id": "crushed_iron_ore", "amount": 1.0, "output_kind": "resource" }
+      ],
+      "duration_seconds": 2.0,
+      "tags": ["iron_route", "mechanical", "slice1"]
+    },
+    {
+      "id": "wash_crushed_iron_ore",
+      "display_name": "Wash Crushed Iron Ore",
+      "process_family": "washing",
+      "machine_class": "washer",
+      "inputs": [
+        { "resource_id": "crushed_iron_ore", "amount": 1.0 },
+        { "resource_id": "water", "amount": 1.0 },
+        { "resource_id": "power", "amount": 1.0 }
+      ],
+      "outputs": [
+        { "resource_id": "washed_iron_ore", "amount": 1.0, "output_kind": "resource" },
+        { "resource_id": "dirty_water", "amount": 1.0, "output_kind": "waste", "blocks_if_full": true }
+      ],
+      "duration_seconds": 3.0,
+      "tags": ["iron_route", "wet_processing", "dirty_water_producing", "slice1"]
+    },
+    {
+      "id": "sink_dirty_water",
+      "display_name": "Sink Dirty Water",
+      "process_family": "waste_handling",
+      "machine_class": "sink",
+      "inputs": [
+        { "resource_id": "dirty_water", "amount": 1.0 }
+      ],
+      "outputs": [],
+      "duration_seconds": 1.0,
+      "tags": ["waste_handling", "dirty_water", "slice1"]
+    },
+    {
+      "id": "process_washed_iron_ore",
+      "display_name": "Process Washed Iron Ore",
+      "process_family": "finishing",
+      "machine_class": "processor",
+      "inputs": [
+        { "resource_id": "washed_iron_ore", "amount": 1.0 },
+        { "resource_id": "power", "amount": 1.0 }
+      ],
+      "outputs": [
+        { "resource_id": "basic_iron_output", "amount": 1.0, "output_kind": "resource" }
+      ],
+      "duration_seconds": 2.0,
+      "tags": ["iron_route", "slice1_goal", "slice1"]
+    }
+  ]
+}
