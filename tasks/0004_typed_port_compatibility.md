@@ -1,4 +1,4 @@
-Status: Ready for Review
+Status: Accepted
 
 # Task 0004 — Typed Port Compatibility
 
