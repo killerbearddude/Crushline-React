@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "objectives": [
+    {
+      "id": "basic_iron_certification",
+      "display_name": "Basic Iron Certification",
+      "description": "Build a valid Slice 1 graph that produces Basic Iron Output while handling Dirty Water.",
+      "requirements": [
+        {
+          "kind": "produced_resource",
+          "resource_id": "basic_iron_output",
+          "minimum_amount": 1.0
+        },
+        {
+          "kind": "connected_waste_output",
+          "resource_id": "dirty_water",
+          "required": true
+        }
+      ],
+      "tags": ["slice1", "certification", "iron_route"]
+    }
+  ]
+}

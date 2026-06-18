@@ -1,0 +1,159 @@
+{
+  "version": 1,
+  "machines": [
+    {
+      "id": "basic_generator",
+      "display_name": "Basic Generator",
+      "machine_class": "generator",
+      "tags": ["power", "slice1"],
+      "ports": [
+        {
+          "id": "fuel_input",
+          "display_name": "Fuel Input",
+          "direction": "input",
+          "kind": "resource",
+          "accepted_states": ["solid"],
+          "accepted_tags": ["fuel"],
+          "required": true
+        },
+        {
+          "id": "power_output",
+          "display_name": "Power Output",
+          "direction": "output",
+          "kind": "power",
+          "accepted_resources": ["power"],
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "crusher",
+      "display_name": "Crusher",
+      "machine_class": "crusher",
+      "tags": ["mechanical", "slice1"],
+      "ports": [
+        {
+          "id": "solid_input",
+          "display_name": "Solid Input",
+          "direction": "input",
+          "kind": "resource",
+          "accepted_states": ["solid"],
+          "accepted_tags": ["ore"],
+          "required": true
+        },
+        {
+          "id": "power_input",
+          "display_name": "Power Input",
+          "direction": "input",
+          "kind": "power",
+          "accepted_resources": ["power"],
+          "required": true
+        },
+        {
+          "id": "solid_output",
+          "display_name": "Solid Output",
+          "direction": "output",
+          "kind": "resource",
+          "accepted_states": ["solid"],
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "washer",
+      "display_name": "Washer",
+      "machine_class": "washer",
+      "tags": ["wet_processing", "slice1"],
+      "ports": [
+        {
+          "id": "solid_input",
+          "display_name": "Solid Input",
+          "direction": "input",
+          "kind": "resource",
+          "accepted_resources": ["crushed_iron_ore"],
+          "required": true
+        },
+        {
+          "id": "water_input",
+          "display_name": "Water Input",
+          "direction": "input",
+          "kind": "resource",
+          "accepted_resources": ["water"],
+          "required": true
+        },
+        {
+          "id": "power_input",
+          "display_name": "Power Input",
+          "direction": "input",
+          "kind": "power",
+          "accepted_resources": ["power"],
+          "required": true
+        },
+        {
+          "id": "solid_output",
+          "display_name": "Washed Ore Output",
+          "direction": "output",
+          "kind": "resource",
+          "accepted_resources": ["washed_iron_ore"],
+          "required": true
+        },
+        {
+          "id": "dirty_water_output",
+          "display_name": "Dirty Water Output",
+          "direction": "output",
+          "kind": "waste",
+          "accepted_resources": ["dirty_water"],
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "waste_sink",
+      "display_name": "Waste Sink",
+      "machine_class": "sink",
+      "tags": ["waste_handling", "slice1"],
+      "ports": [
+        {
+          "id": "waste_input",
+          "display_name": "Waste Input",
+          "direction": "input",
+          "kind": "waste",
+          "accepted_tags": ["waste"],
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "basic_processor",
+      "display_name": "Basic Processor",
+      "machine_class": "processor",
+      "tags": ["finishing", "slice1"],
+      "ports": [
+        {
+          "id": "solid_input",
+          "display_name": "Solid Input",
+          "direction": "input",
+          "kind": "resource",
+          "accepted_resources": ["washed_iron_ore"],
+          "required": true
+        },
+        {
+          "id": "power_input",
+          "display_name": "Power Input",
+          "direction": "input",
+          "kind": "power",
+          "accepted_resources": ["power"],
+          "required": true
+        },
+        {
+          "id": "solid_output",
+          "display_name": "Basic Iron Output",
+          "direction": "output",
+          "kind": "resource",
+          "accepted_resources": ["basic_iron_output"],
+          "required": true
+        }
+      ]
+    }
+  ]
+}

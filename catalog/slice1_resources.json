@@ -1,0 +1,53 @@
+{
+  "version": 1,
+  "resources": [
+    {
+      "id": "iron_ore",
+      "display_name": "Iron Ore",
+      "state": "solid",
+      "tags": ["base_material", "ore", "iron_family", "early"]
+    },
+    {
+      "id": "crushed_iron_ore",
+      "display_name": "Crushed Iron Ore",
+      "state": "solid",
+      "tags": ["processed_material", "ore", "iron_family", "crushed", "early"]
+    },
+    {
+      "id": "washed_iron_ore",
+      "display_name": "Washed Iron Ore",
+      "state": "solid",
+      "tags": ["processed_material", "ore", "iron_family", "washed", "early"]
+    },
+    {
+      "id": "basic_iron_output",
+      "display_name": "Basic Iron Output",
+      "state": "solid",
+      "tags": ["processed_material", "iron_family", "slice1_goal"]
+    },
+    {
+      "id": "water",
+      "display_name": "Water",
+      "state": "liquid",
+      "tags": ["base_material", "water_family", "fluid", "early"]
+    },
+    {
+      "id": "dirty_water",
+      "display_name": "Dirty Water",
+      "state": "liquid",
+      "tags": ["waste", "byproduct", "recoverable", "water_family", "early_pressure"]
+    },
+    {
+      "id": "coal",
+      "display_name": "Coal",
+      "state": "solid",
+      "tags": ["base_material", "fuel", "early"]
+    },
+    {
+      "id": "power",
+      "display_name": "Power",
+      "state": "energy",
+      "tags": ["power", "utility", "early"]
+    }
+  ]
+}
