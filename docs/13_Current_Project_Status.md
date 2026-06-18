@@ -10,7 +10,7 @@ React Flow prototype.
 
 ## Current Phase
 
-Ready for Task 0003 catalog loading and validation.
+Task 0003 implementation ready for review.
 
 ## Current Task
 
@@ -18,7 +18,7 @@ Task ID: 0003
 
 Task Title: Catalog Loading and Validation
 
-Status: Approved
+Status: Ready for Review
 
 ## Last Accepted Task
 
@@ -30,13 +30,13 @@ Commit: PR #4.
 
 ## Next Candidate Tasks
 
-1. Run Task 0003: Catalog Loading and Validation.
-2. Implement typed port compatibility.
+1. Review Task 0003 catalog loading and validation.
+2. After acceptance, implement typed port compatibility.
 3. Design minimal Slice 1 diagnostics schema and ownership.
 
 ## Current Blockers
 
-- None.
+- Task 0003 requires director review before acceptance.
 
 ## Active Decisions
 
@@ -62,4 +62,4 @@ Commit: PR #4.
 
 ## Next Director Action
 
-Run Task 0003: Catalog Loading and Validation.
+Review Task 0003 catalog loading and validation.
