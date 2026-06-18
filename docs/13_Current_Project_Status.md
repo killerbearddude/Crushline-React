@@ -26,7 +26,7 @@ Task ID: 0002
 
 Summary: Reviewed and accepted the Slice 1 production catalog. Accepted corrections are: crusher input accepts only `iron_ore`, and Basic Iron Certification requires completing the `sink_dirty_water` recipe.
 
-Commit: Pending merge of `task-0002-accepted-catalog-corrections`.
+Commit: PR #4.
 
 ## Next Candidate Tasks
 
@@ -36,7 +36,7 @@ Commit: Pending merge of `task-0002-accepted-catalog-corrections`.
 
 ## Current Blockers
 
-- Task 0003 should wait until the accepted Task 0002 catalog corrections are merged.
+- None.
 
 ## Active Decisions
 
@@ -62,4 +62,4 @@ Commit: Pending merge of `task-0002-accepted-catalog-corrections`.
 
 ## Next Director Action
 
-Review and merge the Task 0002 accepted catalog corrections, then run Task 0003.
+Run Task 0003: Catalog Loading and Validation.
