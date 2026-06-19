@@ -10,46 +10,46 @@ React Flow prototype.
 
 ## Current Phase
 
-Task 0013 evaluator-derived objective progress ready for review.
+Task 0014 local Slice 1 playtest pass ready for review.
 
 ## Current Task
 
-Task ID: 0013
+Task ID: 0014
 
-Task Title: Evaluator-Derived Objective Progress
+Task Title: Local Slice 1 Playtest Pass
 
 Status: Ready for Review
 
 ## Last Accepted Task
 
-Task ID: 0012
+Task ID: 0013
 
-Summary: Added renderer-independent runtime graph evaluator that derives Slice 1 progress facts from catalog and graph data.
+Summary: Connected prototype objective progress to runtime evaluator facts instead of manual progress buttons.
 
-Commit: PR #15.
+Commit: PR #16.
 
 ## Next Candidate Tasks
 
-1. Review Task 0013 evaluator-derived objective progress.
-2. After acceptance, run a local Slice 1 manual playtest pass.
-3. After playtest, identify final interaction gaps for machine placement and drag-to-connect.
+1. Execute the Task 0014 local playtest script.
+2. Record findings in the Task 0014 notes artifact.
+3. If current prototype passes, implement minimal player connection interaction.
 
 ## Current Blockers
 
-- Task 0013 requires director review before acceptance.
+- Task 0014 requires director local execution before playtest findings can be considered complete.
 
 ## Active Decisions
 
 - Repository is source of truth.
 - React Flow remains active prototype path.
 - Production domain must remain renderer-independent.
-- Tasks 0002 through 0012 are accepted.
+- Tasks 0002 through 0013 are accepted.
 
 ## Drift Risks
 
-- Expanding prototype graph wiring into a full graph editor before the manual playtest pass.
-- Adding throughput, buffers, scheduling, or inventory simulation before needed.
-- Coupling evaluator facts to React Flow-specific node or edge shapes.
+- Expanding into full graph editor behavior before validating the current repair/evaluator loop locally.
+- Adding machine placement and drag-to-connect in one large task.
+- Adding throughput, buffers, scheduling, or persistence before interaction gaps are resolved.
 
 ## Parking Lot Highlights
 
@@ -58,4 +58,4 @@ Commit: PR #15.
 
 ## Next Director Action
 
-Review Task 0013 evaluator-derived objective progress.
+Run the Task 0014 local playtest script and record findings.
