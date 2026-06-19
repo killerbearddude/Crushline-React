@@ -54,9 +54,28 @@ function runtimeMachinesForRecipe(catalog, graph, recipe) {
   return graphMachines(graph).filter((machine) => catalogIds.has(machineCatalogId(machine)));
 }
 
+function runtimeMachinesById(graph) {
+  return new Map(graphMachines(graph).map((machine) => [machine.id, machine]));
+}
+
 function runtimeResourceSet(producedByRuntimeMachine, runtimeMachineId) {
   if (!producedByRuntimeMachine.has(runtimeMachineId)) producedByRuntimeMachine.set(runtimeMachineId, new Set());
   return producedByRuntimeMachine.get(runtimeMachineId);
+}
+
+function recipeCanConsumeResource(recipe, resourceId) {
+  return recipeInputs(recipe).some((input) => input.resource_id === resourceId);
+}
+
+function machineCanConsumeResource(catalog, runtimeMachine, resourceId) {
+  return recipes(catalog).some(
+    (recipe) => recipe.machine_class === machineCatalogClass(catalog, runtimeMachine) && recipeCanConsumeResource(recipe, resourceId),
+  );
+}
+
+function machineCatalogClass(catalog, runtimeMachine) {
+  const catalogMachineId = machineCatalogId(runtimeMachine);
+  return catalog?.machines?.machines?.find((machine) => machine.id === catalogMachineId)?.machine_class;
 }
 
 function hasIncomingResource(catalog, graph, targetRuntimeId, resourceId, producedByRuntimeMachine, externalResources) {
@@ -73,13 +92,20 @@ function hasIncomingResource(catalog, graph, targetRuntimeId, resourceId, produc
 }
 
 function hasHandledBlockingOutputs(catalog, graph, runtimeMachine, recipe) {
+  const machinesById = runtimeMachinesById(graph);
+
   return recipeOutputs(recipe)
     .filter((output) => output.blocks_if_full === true)
     .every((output) =>
-      compatibleRuntimeConnections(catalog, graph).some(
-        (connection) =>
-          connectionSourceRuntimeId(connection) === runtimeMachine.id && connection.resource_id === output.resource_id,
-      ),
+      compatibleRuntimeConnections(catalog, graph).some((connection) => {
+        const targetRuntimeMachine = machinesById.get(connectionTargetRuntimeId(connection));
+        return (
+          connectionSourceRuntimeId(connection) === runtimeMachine.id &&
+          connection.resource_id === output.resource_id &&
+          targetRuntimeMachine !== undefined &&
+          machineCanConsumeResource(catalog, targetRuntimeMachine, output.resource_id)
+        );
+      }),
     );
 }
 
