@@ -45,23 +45,45 @@ body {
   font-size: 1.6rem;
 }
 
+.build-actions,
 .repair-actions {
   display: grid;
   gap: 10px;
   margin-bottom: 20px;
 }
 
+.build-actions {
+  border: 1px solid rgba(91, 169, 255, 0.18);
+  border-radius: 14px;
+  padding: 12px;
+  background: rgba(91, 169, 255, 0.06);
+}
+
+.build-actions label {
+  color: #9eabc5;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.build-actions select,
+.build-actions button,
 .repair-actions button {
   border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 10px;
   padding: 10px 12px;
   background: rgba(255, 255, 255, 0.08);
   color: #f5f7fb;
-  cursor: pointer;
   font: inherit;
+}
+
+.build-actions button,
+.repair-actions button {
+  cursor: pointer;
   text-align: left;
 }
 
+.build-actions button:hover,
 .repair-actions button:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.14);
 }
