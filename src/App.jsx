@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Background, Controls, MiniMap, ReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -104,7 +104,7 @@ const dirtyWaterHandlingConnection = {
   resource_id: "dirty_water",
 };
 
-const nodePositions = {
+const initialNodePositions = {
   generator_1: { x: 0, y: 60 },
   crusher_1: { x: 260, y: 60 },
   washer_1: { x: 520, y: 60 },
@@ -115,12 +115,39 @@ const nodePositions = {
 const displayNames = new Map(catalog.machines.machines.map((machine) => [machine.id, machine.display_name]));
 const diagnosticDefinitions = new Map(catalog.diagnostics.diagnostics.map((diagnostic) => [diagnostic.id, diagnostic]));
 
+function readablePortName(portId) {
+  return portId.replaceAll("_", " ");
+}
+
 function diagnosticLabel(diagnostic) {
   const definition = diagnosticDefinitions.get(diagnostic.definition_id);
-  return definition ?? {
+  const fallback = definition ?? {
     title: diagnostic.definition_id,
     message: "No diagnostic definition found.",
     repair_hint: "Check diagnostics catalog.",
+  };
+
+  if (diagnostic.definition_id === "invalid_connection") {
+    const sourcePort = readablePortName(diagnostic.target.source_port_id ?? "source port");
+    const targetPort = readablePortName(diagnostic.target.target_port_id ?? "target port");
+    return {
+      ...fallback,
+      message: `${sourcePort} cannot connect to ${targetPort}.`,
+      repair_hint: "Use the repair button to move Power Output to the Crusher Power Input.",
+      target_label: "Connection attempt",
+    };
+  }
+
+  if (diagnostic.target.kind === "port") {
+    return {
+      ...fallback,
+      target_label: `${diagnostic.target.machine_id} / ${diagnostic.target.port_id}`,
+    };
+  }
+
+  return {
+    ...fallback,
+    target_label: diagnostic.target.kind,
   };
 }
 
@@ -132,13 +159,13 @@ function hasDiagnostic(diagnostics, definitionId) {
   return diagnostics.some((diagnostic) => diagnostic.definition_id === definitionId);
 }
 
-function graphNodes(graph, diagnostics) {
+function graphNodes(graph, diagnostics, nodePositions) {
   return graph.machines.map((machine) => {
     const localDiagnostics = diagnosticsForMachine(diagnostics, machine.id);
     return {
       id: machine.id,
       type: "default",
-      position: nodePositions[machine.id],
+      position: nodePositions[machine.id] ?? { x: 0, y: 0 },
       data: {
         label: (
           <div className="machine-node">
@@ -173,12 +200,27 @@ function addConnectionOnce(connections, connectionToAdd) {
 
 export default function App() {
   const [graph, setGraph] = useState(initialPrototypeGraph);
+  const [nodePositions, setNodePositions] = useState(initialNodePositions);
   const diagnostics = useMemo(() => diagnoseLocalGraph(catalog, graph), [graph]);
   const evaluatorResult = useMemo(() => evaluateRuntimeGraph(catalog, graph), [graph]);
   const objectives = useMemo(() => evaluateObjectives(catalog, evaluatorResult.progress), [evaluatorResult]);
   const basicIronObjective = objectives.find((objective) => objective.objective_id === "basic_iron_certification");
-  const nodes = useMemo(() => graphNodes(graph, diagnostics), [graph, diagnostics]);
+  const nodes = useMemo(() => graphNodes(graph, diagnostics, nodePositions), [graph, diagnostics, nodePositions]);
   const edges = useMemo(() => graphEdges(graph), [graph]);
+
+  const handleNodesChange = useCallback((changes) => {
+    setNodePositions((currentPositions) => {
+      let nextPositions = currentPositions;
+
+      for (const change of changes) {
+        if (change.type !== "position" || !change.position) continue;
+        if (nextPositions === currentPositions) nextPositions = { ...currentPositions };
+        nextPositions[change.id] = change.position;
+      }
+
+      return nextPositions;
+    });
+  }, []);
 
   const repairInvalidConnection = () => {
     setGraph((currentGraph) => ({
@@ -194,14 +236,18 @@ export default function App() {
     }));
   };
 
-  const resetGraph = () => setGraph(initialPrototypeGraph);
+  const resetGraph = () => {
+    setGraph(initialPrototypeGraph);
+    setNodePositions(initialNodePositions);
+  };
+
   const hasInvalidConnectionDiagnostic = hasDiagnostic(diagnostics, "invalid_connection");
   const hasDirtyWaterDiagnostic = hasDiagnostic(diagnostics, "dirty_water_output_blocked");
 
   return (
     <main className="app-shell">
       <section className="graph-panel" aria-label="Slice 1 prototype graph">
-        <ReactFlow nodes={nodes} edges={edges} fitView>
+        <ReactFlow nodes={nodes} edges={edges} onNodesChange={handleNodesChange} fitView nodesDraggable>
           <MiniMap />
           <Controls />
           <Background />
@@ -236,10 +282,9 @@ export default function App() {
                 <li key={`${diagnostic.definition_id}-${index}`} className={`diagnostic ${diagnostic.severity}`}>
                   <span>{diagnostic.severity}</span>
                   <h2>{definition.title}</h2>
-                  <p>{definition.message}</p>
-                  <strong>Repair:</strong>
-                  <p>{definition.repair_hint}</p>
-                  <small>{diagnostic.target.kind}</small>
+                  <p className="diagnostic-summary">{definition.message}</p>
+                  <p className="diagnostic-repair">Fix: {definition.repair_hint}</p>
+                  <small>{definition.target_label}</small>
                 </li>
               );
             })}
