@@ -10,46 +10,46 @@ React Flow prototype.
 
 ## Current Phase
 
-Task 0010 objective completion feedback ready for review.
+Task 0011 Slice 1 playtest checklist review ready for review.
 
 ## Current Task
 
-Task ID: 0010
+Task ID: 0011
 
-Task Title: Objective Completion Feedback
+Task Title: Slice 1 Playtest Checklist Review
 
 Status: Ready for Review
 
 ## Last Accepted Task
 
-Task ID: 0009
+Task ID: 0010
 
-Summary: Added graph repair interaction checks that clear diagnostics through graph state changes.
+Summary: Added renderer-independent objective progress evaluation and prototype objective completion feedback.
 
-Commit: PR #12.
+Commit: PR #13.
 
 ## Next Candidate Tasks
 
-1. Review Task 0010 objective completion feedback.
-2. After acceptance, run Slice 1 playtest checklist review.
-3. After playtest review, identify final Slice 1 blocking gaps.
+1. Review Task 0011 Slice 1 playtest checklist review.
+2. After acceptance, implement a minimal runtime graph production evaluator.
+3. After evaluator work, derive objective progress from graph/evaluator facts.
 
 ## Current Blockers
 
-- Task 0010 requires director review before acceptance.
+- Task 0011 requires director review before acceptance.
 
 ## Active Decisions
 
 - Repository is source of truth.
 - React Flow remains active prototype path.
 - Production domain must remain renderer-independent.
-- Tasks 0002 through 0009 are accepted.
+- Tasks 0002 through 0010 are accepted.
 
 ## Drift Risks
 
-- Letting objective feedback become a full quest tree.
-- Adding production simulation before playtest checklist review.
-- Coupling production logic directly to React Flow components.
+- Adding throughput, buffers, scheduling, or persistence before the minimal evaluator is proven.
+- Letting production evaluation become full simulation too early.
+- Coupling evaluator logic to React Flow components.
 
 ## Parking Lot Highlights
 
@@ -58,4 +58,4 @@ Commit: PR #12.
 
 ## Next Director Action
 
-Review Task 0010 objective completion feedback.
+Review Task 0011 Slice 1 playtest checklist review.
