@@ -9,7 +9,8 @@
     "validate:catalog": "node scripts/validate-slice1-catalog.mjs",
     "check:ports": "node scripts/check-slice1-port-compatibility.mjs",
     "check:diagnostics": "node scripts/check-slice1-local-diagnostics.mjs",
-    "check:objectives": "node scripts/check-slice1-objectives.mjs"
+    "check:objectives": "node scripts/check-slice1-objectives.mjs",
+    "check:evaluator": "node scripts/check-slice1-runtime-evaluator.mjs"
   },
   "dependencies": {
     "@xyflow/react": "^12.8.0",
