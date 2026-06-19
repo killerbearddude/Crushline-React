@@ -1,4 +1,4 @@
-Status: Ready for Review
+Status: Accepted
 
 # Task 0006 — Diagnostics Catalog and Validator Support
 
