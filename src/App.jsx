@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from "react";
-import { Background, Controls, MiniMap, ReactFlow } from "@xyflow/react";
+import { Background, Controls, Handle, MiniMap, Position, ReactFlow } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
 import diagnosticsCatalog from "../catalog/slice1_diagnostics.json";
@@ -7,7 +7,7 @@ import machinesCatalog from "../catalog/slice1_machines.json";
 import objectivesCatalog from "../catalog/slice1_objectives.json";
 import recipesCatalog from "../catalog/slice1_recipes.json";
 import resourcesCatalog from "../catalog/slice1_resources.json";
-import { diagnoseLocalGraph } from "./domain/localDiagnostics.mjs";
+import { diagnoseConnectionAttempt, diagnoseLocalGraph } from "./domain/localDiagnostics.mjs";
 import { evaluateObjectives } from "./domain/objectiveProgress.mjs";
 import { evaluateRuntimeGraph } from "./domain/runtimeGraphEvaluator.mjs";
 
@@ -113,11 +113,49 @@ const initialNodePositions = {
 };
 
 const displayNames = new Map(catalog.machines.machines.map((machine) => [machine.id, machine.display_name]));
+const catalogMachinesById = new Map(catalog.machines.machines.map((machine) => [machine.id, machine]));
 const diagnosticDefinitions = new Map(catalog.diagnostics.diagnostics.map((diagnostic) => [diagnostic.id, diagnostic]));
 
 function readablePortName(portId) {
   return portId.replaceAll("_", " ");
 }
+
+function portHandleTop(index) {
+  return 44 + index * 24;
+}
+
+function MachineNode({ data }) {
+  const ports = data.catalogMachine?.ports ?? [];
+
+  return (
+    <div className="machine-node">
+      <strong>{data.displayName}</strong>
+      <span>{data.runtimeMachine.id}</span>
+      {data.diagnosticCount > 0 ? <em>{data.diagnosticCount} diagnostic</em> : null}
+      <div className="port-list" aria-label={`${data.displayName} ports`}>
+        {ports.map((port, index) => {
+          const isInput = port.direction === "input";
+          return (
+            <div key={port.id} className={`port-row ${port.direction}`}>
+              <Handle
+                id={port.id}
+                type={isInput ? "target" : "source"}
+                position={isInput ? Position.Left : Position.Right}
+                className={`port-handle ${port.kind}`}
+                style={{ top: portHandleTop(index) }}
+              />
+              <small>{port.display_name ?? readablePortName(port.id)}</small>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+const nodeTypes = {
+  machine: MachineNode,
+};
 
 function diagnosticLabel(diagnostic) {
   const definition = diagnosticDefinitions.get(diagnostic.definition_id);
@@ -133,8 +171,8 @@ function diagnosticLabel(diagnostic) {
     return {
       ...fallback,
       message: `${sourcePort} cannot connect to ${targetPort}.`,
-      repair_hint: "Use the repair button to move Power Output to the Crusher Power Input.",
-      target_label: "Connection attempt",
+      repair_hint: "Connect an output port to a compatible input port.",
+      target_label: "Rejected connection attempt",
     };
   }
 
@@ -161,19 +199,17 @@ function hasDiagnostic(diagnostics, definitionId) {
 
 function graphNodes(graph, diagnostics, nodePositions) {
   return graph.machines.map((machine) => {
+    const catalogMachine = catalogMachinesById.get(machine.catalog_machine_id);
     const localDiagnostics = diagnosticsForMachine(diagnostics, machine.id);
     return {
       id: machine.id,
-      type: "default",
+      type: "machine",
       position: nodePositions[machine.id] ?? { x: 0, y: 0 },
       data: {
-        label: (
-          <div className="machine-node">
-            <strong>{displayNames.get(machine.catalog_machine_id) ?? machine.catalog_machine_id}</strong>
-            <span>{machine.id}</span>
-            {localDiagnostics.length > 0 ? <em>{localDiagnostics.length} diagnostic</em> : null}
-          </div>
-        ),
+        runtimeMachine: machine,
+        catalogMachine,
+        displayName: displayNames.get(machine.catalog_machine_id) ?? machine.catalog_machine_id,
+        diagnosticCount: localDiagnostics.length,
       },
     };
   });
@@ -183,7 +219,9 @@ function graphEdges(graph) {
   return graph.connections.map((connection) => ({
     id: connection.id,
     source: connection.source_runtime_machine_id,
+    sourceHandle: connection.source_port_id,
     target: connection.target_runtime_machine_id,
+    targetHandle: connection.target_port_id,
     label: `${connection.source_port_id} → ${connection.target_port_id}`,
     animated: connection.id === "invalid_power_to_solid",
   }));
@@ -198,10 +236,57 @@ function addConnectionOnce(connections, connectionToAdd) {
   return [...connections, connectionToAdd];
 }
 
+function graphMachinesByRuntimeId(graph) {
+  return new Map(graph.machines.map((machine) => [machine.id, machine]));
+}
+
+function findPort(catalogMachine, portId) {
+  return catalogMachine?.ports?.find((port) => port.id === portId);
+}
+
+function firstAcceptedResource(port) {
+  return Array.isArray(port?.accepted_resources) ? port.accepted_resources[0] : undefined;
+}
+
+function inferAttemptResource(sourcePort, targetPort) {
+  return firstAcceptedResource(sourcePort) ?? firstAcceptedResource(targetPort) ?? "unknown_resource";
+}
+
+function buildConnectionAttempt(graph, connectionParams) {
+  const runtimeMachines = graphMachinesByRuntimeId(graph);
+  const sourceRuntimeMachine = runtimeMachines.get(connectionParams.source);
+  const targetRuntimeMachine = runtimeMachines.get(connectionParams.target);
+  if (!sourceRuntimeMachine || !targetRuntimeMachine) return undefined;
+
+  const sourceMachineId = sourceRuntimeMachine.catalog_machine_id;
+  const targetMachineId = targetRuntimeMachine.catalog_machine_id;
+  const sourceCatalogMachine = catalogMachinesById.get(sourceMachineId);
+  const targetCatalogMachine = catalogMachinesById.get(targetMachineId);
+  const sourcePort = findPort(sourceCatalogMachine, connectionParams.sourceHandle);
+  const targetPort = findPort(targetCatalogMachine, connectionParams.targetHandle);
+  const resourceId = inferAttemptResource(sourcePort, targetPort);
+
+  return {
+    id: `player_${connectionParams.source}_${connectionParams.sourceHandle}_to_${connectionParams.target}_${connectionParams.targetHandle}`,
+    source_runtime_machine_id: connectionParams.source,
+    source_machine_id: sourceMachineId,
+    source_port_id: connectionParams.sourceHandle,
+    target_runtime_machine_id: connectionParams.target,
+    target_machine_id: targetMachineId,
+    target_port_id: connectionParams.targetHandle,
+    resource_id: resourceId,
+  };
+}
+
 export default function App() {
   const [graph, setGraph] = useState(initialPrototypeGraph);
   const [nodePositions, setNodePositions] = useState(initialNodePositions);
-  const diagnostics = useMemo(() => diagnoseLocalGraph(catalog, graph), [graph]);
+  const [connectionAttemptDiagnostics, setConnectionAttemptDiagnostics] = useState([]);
+  const graphDiagnostics = useMemo(() => diagnoseLocalGraph(catalog, graph), [graph]);
+  const diagnostics = useMemo(
+    () => [...connectionAttemptDiagnostics, ...graphDiagnostics],
+    [connectionAttemptDiagnostics, graphDiagnostics],
+  );
   const evaluatorResult = useMemo(() => evaluateRuntimeGraph(catalog, graph), [graph]);
   const objectives = useMemo(() => evaluateObjectives(catalog, evaluatorResult.progress), [evaluatorResult]);
   const basicIronObjective = objectives.find((objective) => objective.objective_id === "basic_iron_certification");
@@ -222,7 +307,28 @@ export default function App() {
     });
   }, []);
 
+  const handleConnect = useCallback(
+    (connectionParams) => {
+      const connectionAttempt = buildConnectionAttempt(graph, connectionParams);
+      if (!connectionAttempt) return;
+
+      const attemptDiagnostics = diagnoseConnectionAttempt(catalog, connectionAttempt);
+      if (attemptDiagnostics.length > 0) {
+        setConnectionAttemptDiagnostics(attemptDiagnostics);
+        return;
+      }
+
+      setConnectionAttemptDiagnostics([]);
+      setGraph((currentGraph) => ({
+        ...currentGraph,
+        connections: addConnectionOnce(currentGraph.connections, connectionAttempt),
+      }));
+    },
+    [graph],
+  );
+
   const repairInvalidConnection = () => {
+    setConnectionAttemptDiagnostics([]);
     setGraph((currentGraph) => ({
       ...currentGraph,
       connections: replaceConnection(currentGraph.connections, "invalid_power_to_solid", repairedPowerConnection),
@@ -230,6 +336,7 @@ export default function App() {
   };
 
   const connectDirtyWaterHandling = () => {
+    setConnectionAttemptDiagnostics([]);
     setGraph((currentGraph) => ({
       ...currentGraph,
       connections: addConnectionOnce(currentGraph.connections, dirtyWaterHandlingConnection),
@@ -239,15 +346,24 @@ export default function App() {
   const resetGraph = () => {
     setGraph(initialPrototypeGraph);
     setNodePositions(initialNodePositions);
+    setConnectionAttemptDiagnostics([]);
   };
 
-  const hasInvalidConnectionDiagnostic = hasDiagnostic(diagnostics, "invalid_connection");
-  const hasDirtyWaterDiagnostic = hasDiagnostic(diagnostics, "dirty_water_output_blocked");
+  const hasInvalidConnectionDiagnostic = hasDiagnostic(graphDiagnostics, "invalid_connection");
+  const hasDirtyWaterDiagnostic = hasDiagnostic(graphDiagnostics, "dirty_water_output_blocked");
 
   return (
     <main className="app-shell">
       <section className="graph-panel" aria-label="Slice 1 prototype graph">
-        <ReactFlow nodes={nodes} edges={edges} onNodesChange={handleNodesChange} fitView nodesDraggable>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          onConnect={handleConnect}
+          onNodesChange={handleNodesChange}
+          fitView
+          nodesDraggable
+        >
           <MiniMap />
           <Controls />
           <Background />
@@ -271,6 +387,8 @@ export default function App() {
             Reset prototype
           </button>
         </div>
+
+        <p className="interaction-hint">Drag from an output port handle to an input port handle to test a connection.</p>
 
         {diagnostics.length === 0 ? (
           <p className="all-clear">No active diagnostics. Runtime evaluator can derive route progress.</p>

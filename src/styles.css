@@ -71,6 +71,16 @@ body {
   opacity: 0.45;
 }
 
+.interaction-hint {
+  border: 1px solid rgba(91, 169, 255, 0.22);
+  border-radius: 12px;
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  background: rgba(91, 169, 255, 0.08);
+  color: #cfe4ff;
+  line-height: 1.4;
+}
+
 .all-clear {
   border: 1px solid rgba(128, 255, 180, 0.28);
   border-radius: 14px;
@@ -194,9 +204,10 @@ body {
 
 .machine-node {
   display: grid;
-  gap: 4px;
-  min-width: 150px;
+  gap: 6px;
+  min-width: 180px;
   cursor: grab;
+  padding-bottom: 4px;
   text-align: left;
 }
 
@@ -214,6 +225,48 @@ body {
   font-size: 0.75rem;
   font-style: normal;
   font-weight: 700;
+}
+
+.port-list {
+  display: grid;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.port-row {
+  border-radius: 8px;
+  padding: 3px 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: #8fa0bd;
+  font-size: 0.7rem;
+}
+
+.port-row.input {
+  padding-left: 12px;
+}
+
+.port-row.output {
+  padding-right: 12px;
+  text-align: right;
+}
+
+.react-flow__handle.port-handle {
+  width: 9px;
+  height: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: #9eabc5;
+}
+
+.react-flow__handle.port-handle.power {
+  background: #ffd23f;
+}
+
+.react-flow__handle.port-handle.resource {
+  background: #9eabc5;
+}
+
+.react-flow__handle.port-handle.waste {
+  background: #ff8a2a;
 }
 
 @media (max-width: 900px) {
