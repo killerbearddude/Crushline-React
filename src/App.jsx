@@ -112,6 +112,10 @@ const initialNodePositions = {
   processor_1: { x: 780, y: 60 },
 };
 
+const placementMachineIds = ["basic_generator", "crusher", "washer", "waste_sink", "basic_processor"];
+const placementStartPosition = { x: 80, y: 360 };
+const placementOffset = { x: 40, y: 30 };
+
 const displayNames = new Map(catalog.machines.machines.map((machine) => [machine.id, machine.display_name]));
 const catalogMachinesById = new Map(catalog.machines.machines.map((machine) => [machine.id, machine]));
 const diagnosticDefinitions = new Map(catalog.diagnostics.diagnostics.map((diagnostic) => [diagnostic.id, diagnostic]));
@@ -278,9 +282,24 @@ function buildConnectionAttempt(graph, connectionParams) {
   };
 }
 
+function nextMachineRuntimeId(graph, catalogMachineId) {
+  const prefix = catalogMachineId.replaceAll("_", "-");
+  const nextIndex = graph.machines.filter((machine) => machine.catalog_machine_id === catalogMachineId).length + 1;
+  return `${prefix}-placed-${nextIndex}`;
+}
+
+function nextPlacementPosition(graph) {
+  const placedCount = graph.machines.length - initialPrototypeGraph.machines.length;
+  return {
+    x: placementStartPosition.x + placedCount * placementOffset.x,
+    y: placementStartPosition.y + placedCount * placementOffset.y,
+  };
+}
+
 export default function App() {
   const [graph, setGraph] = useState(initialPrototypeGraph);
   const [nodePositions, setNodePositions] = useState(initialNodePositions);
+  const [selectedMachineId, setSelectedMachineId] = useState(placementMachineIds[0]);
   const [connectionAttemptDiagnostics, setConnectionAttemptDiagnostics] = useState([]);
   const graphDiagnostics = useMemo(() => diagnoseLocalGraph(catalog, graph), [graph]);
   const diagnostics = useMemo(
@@ -326,6 +345,20 @@ export default function App() {
     },
     [graph],
   );
+
+  const placeSelectedMachine = () => {
+    const runtimeMachineId = nextMachineRuntimeId(graph, selectedMachineId);
+    const position = nextPlacementPosition(graph);
+    setConnectionAttemptDiagnostics([]);
+    setGraph((currentGraph) => ({
+      ...currentGraph,
+      machines: [...currentGraph.machines, { id: runtimeMachineId, catalog_machine_id: selectedMachineId }],
+    }));
+    setNodePositions((currentPositions) => ({
+      ...currentPositions,
+      [runtimeMachineId]: position,
+    }));
+  };
 
   const repairInvalidConnection = () => {
     setConnectionAttemptDiagnostics([]);
@@ -376,6 +409,20 @@ export default function App() {
           <h1>Local Diagnostics</h1>
         </header>
 
+        <div className="build-actions" aria-label="Machine placement actions">
+          <label htmlFor="machine-to-place">Place machine</label>
+          <select id="machine-to-place" value={selectedMachineId} onChange={(event) => setSelectedMachineId(event.target.value)}>
+            {placementMachineIds.map((machineId) => (
+              <option key={machineId} value={machineId}>
+                {displayNames.get(machineId) ?? machineId}
+              </option>
+            ))}
+          </select>
+          <button type="button" onClick={placeSelectedMachine}>
+            Place selected machine
+          </button>
+        </div>
+
         <div className="repair-actions" aria-label="Graph repair actions">
           <button type="button" onClick={repairInvalidConnection} disabled={!hasInvalidConnectionDiagnostic}>
             Repair invalid power connection
@@ -388,7 +435,7 @@ export default function App() {
           </button>
         </div>
 
-        <p className="interaction-hint">Drag from an output port handle to an input port handle to test a connection.</p>
+        <p className="interaction-hint">Place machines locally, drag nodes, then drag from an output port handle to an input port handle.</p>
 
         {diagnostics.length === 0 ? (
           <p className="all-clear">No active diagnostics. Runtime evaluator can derive route progress.</p>
