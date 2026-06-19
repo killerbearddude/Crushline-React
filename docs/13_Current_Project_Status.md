@@ -10,40 +10,40 @@ React Flow prototype.
 
 ## Current Phase
 
-Task 0018 Slice 1 interaction checklist pass ready for review.
+Task 0019 minimal machine placement interaction ready for review.
 
 ## Current Task
 
-Task ID: 0018
+Task ID: 0019
 
-Task Title: Slice 1 Interaction Checklist Pass
+Task Title: Minimal Machine Placement Interaction
 
 Status: Ready for Review
 
 ## Last Accepted Task
 
-Task ID: 0017
+Task ID: 0018
 
-Summary: Minimal player connection interaction accepted after director-reported manual tests passed.
+Summary: Interaction checklist review accepted minimal machine placement as the next bounded Slice 1 task.
 
-Commit: PR #20.
+Commit: PR #21.
 
 ## Next Candidate Tasks
 
-1. Review Task 0018 Slice 1 interaction checklist pass.
-2. After acceptance, implement minimal machine placement interaction.
-3. After placement, run a full Slice 1 interaction/playtest pass.
+1. Review Task 0019 minimal machine placement interaction.
+2. Run local validation for placement, dragging, connection attempts, reset, and objective flow.
+3. After acceptance, run a full Slice 1 interaction/playtest pass.
 
 ## Current Blockers
 
-- Task 0018 requires director review.
+- Task 0019 requires director review and local browser validation.
 
 ## Active Decisions
 
 - Repository is source of truth.
 - React Flow remains active prototype path.
 - Production domain must remain renderer-independent.
-- Tasks 0002 through 0017 are accepted.
+- Tasks 0002 through 0018 are accepted.
 
 ## Drift Risks
 
@@ -58,4 +58,4 @@ Commit: PR #20.
 
 ## Next Director Action
 
-Review Task 0018 and decide whether to proceed to minimal machine placement interaction.
+Review Task 0019 and validate minimal placement locally.
