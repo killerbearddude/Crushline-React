@@ -1,14 +1,5 @@
 import { checkPortCompatibility } from "./portCompatibility.mjs";
 
-function byId(items) {
-  const index = new Map();
-  if (!Array.isArray(items)) return index;
-  for (const item of items) {
-    if (item && typeof item.id === "string") index.set(item.id, item);
-  }
-  return index;
-}
-
 function graphMachines(graph) {
   return Array.isArray(graph?.machines) ? graph.machines : [];
 }
@@ -63,17 +54,27 @@ function runtimeMachinesForRecipe(catalog, graph, recipe) {
   return graphMachines(graph).filter((machine) => catalogIds.has(machineCatalogId(machine)));
 }
 
-function hasIncomingResource(catalog, graph, targetRuntimeId, resourceId, producedResources, externalResources) {
+function runtimeResourceSet(producedByRuntimeMachine, runtimeMachineId) {
+  if (!producedByRuntimeMachine.has(runtimeMachineId)) producedByRuntimeMachine.set(runtimeMachineId, new Set());
+  return producedByRuntimeMachine.get(runtimeMachineId);
+}
+
+function hasIncomingResource(catalog, graph, targetRuntimeId, resourceId, producedByRuntimeMachine, externalResources) {
   if (externalResources.has(resourceId)) return true;
 
   return compatibleRuntimeConnections(catalog, graph).some((connection) => {
-    return connectionTargetRuntimeId(connection) === targetRuntimeId && connection.resource_id === resourceId && producedResources.has(resourceId);
+    const sourceRuntimeId = connectionSourceRuntimeId(connection);
+    return (
+      connectionTargetRuntimeId(connection) === targetRuntimeId &&
+      connection.resource_id === resourceId &&
+      runtimeResourceSet(producedByRuntimeMachine, sourceRuntimeId).has(resourceId)
+    );
   });
 }
 
-function canRunRecipe(catalog, graph, recipe, runtimeMachine, producedResources, externalResources) {
+function canRunRecipe(catalog, graph, recipe, runtimeMachine, producedByRuntimeMachine, externalResources) {
   return recipeInputs(recipe).every((input) =>
-    hasIncomingResource(catalog, graph, runtimeMachine.id, input.resource_id, producedResources, externalResources),
+    hasIncomingResource(catalog, graph, runtimeMachine.id, input.resource_id, producedByRuntimeMachine, externalResources),
   );
 }
 
@@ -85,37 +86,38 @@ function addRecipeProgress(progress, recipe) {
 }
 
 export function evaluateRuntimeGraph(catalog, graph) {
-  const producedResources = new Set(graphExternalResources(graph));
   const externalResources = graphExternalResources(graph);
   const progress = {
     produced_resources: {},
     completed_recipes: {},
   };
-  const completedRecipes = new Set();
+  const completedRecipeInstances = new Set();
+  const producedByRuntimeMachine = new Map();
 
   let changed = true;
   while (changed) {
     changed = false;
 
     for (const recipe of recipes(catalog)) {
-      if (completedRecipes.has(recipe.id)) continue;
+      for (const runtimeMachine of runtimeMachinesForRecipe(catalog, graph, recipe)) {
+        const instanceId = `${runtimeMachine.id}:${recipe.id}`;
+        if (completedRecipeInstances.has(instanceId)) continue;
 
-      const runnableMachine = runtimeMachinesForRecipe(catalog, graph, recipe).find((runtimeMachine) =>
-        canRunRecipe(catalog, graph, recipe, runtimeMachine, producedResources, externalResources),
-      );
+        if (!canRunRecipe(catalog, graph, recipe, runtimeMachine, producedByRuntimeMachine, externalResources)) continue;
 
-      if (!runnableMachine) continue;
-
-      completedRecipes.add(recipe.id);
-      for (const output of recipeOutputs(recipe)) producedResources.add(output.resource_id);
-      addRecipeProgress(progress, recipe);
-      changed = true;
+        completedRecipeInstances.add(instanceId);
+        for (const output of recipeOutputs(recipe)) {
+          runtimeResourceSet(producedByRuntimeMachine, runtimeMachine.id).add(output.resource_id);
+        }
+        addRecipeProgress(progress, recipe);
+        changed = true;
+      }
     }
   }
 
   return {
     progress,
-    completed_recipes: [...completedRecipes],
-    produced_resources: [...producedResources].filter((resourceId) => !externalResources.has(resourceId)),
+    completed_recipes: [...new Set([...completedRecipeInstances].map((instanceId) => instanceId.split(":")[1]))],
+    produced_resources: [...new Set([...producedByRuntimeMachine.values()].flatMap((resources) => [...resources]))],
   };
 }
