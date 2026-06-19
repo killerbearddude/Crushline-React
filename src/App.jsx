@@ -125,7 +125,7 @@ function portHandleTop(index) {
 }
 
 function MachineNode({ data }) {
-  const ports = data.catalogMachine.ports ?? [];
+  const ports = data.catalogMachine?.ports ?? [];
 
   return (
     <div className="machine-node">
