@@ -81,6 +81,28 @@ assert(
   "dirty water diagnostic should target the washer dirty water output.",
 );
 
+const graphWithInvalidDirtyWaterHandling = {
+  machines: [
+    { id: "washer_1", catalog_machine_id: "washer" },
+    { id: "crusher_1", catalog_machine_id: "crusher" },
+  ],
+  connections: [
+    {
+      source_runtime_machine_id: "washer_1",
+      source_machine_id: "washer",
+      source_port_id: "dirty_water_output",
+      target_machine_id: "crusher",
+      target_port_id: "solid_input",
+      resource_id: "dirty_water",
+    },
+  ],
+};
+expectDiagnostic(
+  "incompatible dirty water handling",
+  diagnoseDirtyWaterBlockage(catalog, graphWithInvalidDirtyWaterHandling),
+  "dirty_water_output_blocked",
+);
+
 const graphWithHandledDirtyWater = {
   machines: [
     { id: "washer_1", catalog_machine_id: "washer" },
