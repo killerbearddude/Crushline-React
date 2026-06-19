@@ -10,45 +10,46 @@ React Flow prototype.
 
 ## Current Phase
 
-Task 0016 focused interaction playtest ready for review.
+Task 0017 minimal player connection interaction ready for review.
 
 ## Current Task
 
-Task ID: 0016
+Task ID: 0017
 
-Task Title: Focused Interaction Playtest
+Task Title: Minimal Player Connection Interaction
 
 Status: Ready for Review
 
 ## Last Accepted Task
 
-Task ID: 0015
+Task ID: 0016
 
-Summary: Fixed focused local interaction and diagnostic readability issues from Task 0014.
+Summary: Focused interaction playtest passed and cleared the path for minimal player connection interaction.
 
-Commit: PR #18.
+Commit: PR #19.
 
 ## Next Candidate Tasks
 
-1. Execute the Task 0016 focused local playtest.
-2. Record findings in the Task 0016 notes artifact.
-3. If accepted, implement minimal player connection interaction.
+1. Review Task 0017 minimal player connection interaction.
+2. Run local validation for compatible and incompatible player connection attempts.
+3. If accepted, run a Slice 1 interaction checklist pass for placement/connection gaps.
 
 ## Current Blockers
 
-- Task 0016 requires director local execution before proceeding to player connection interaction.
+- Task 0017 requires director review and local browser validation.
 
 ## Active Decisions
 
 - Repository is source of truth.
 - React Flow remains active prototype path.
 - Production domain must remain renderer-independent.
-- Tasks 0002 through 0015 are accepted.
+- Tasks 0002 through 0016 are accepted.
 
 ## Drift Risks
 
-- Adding machine placement and drag-to-connect in one large task.
 - Expanding minimal connection interaction into a broad graph editor.
+- Adding machine placement before connection attempts are validated.
+- Adding save/load or persistence before Slice 1 interaction flow is stable.
 - Treating the uploaded prototype image as source of truth without a repo decision.
 
 ## Parking Lot Highlights
@@ -58,4 +59,4 @@ Commit: PR #18.
 
 ## Next Director Action
 
-Run the Task 0016 focused local playtest and record findings.
+Review Task 0017 and validate compatible/incompatible connection attempts locally.
