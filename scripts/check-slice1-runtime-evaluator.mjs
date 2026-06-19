@@ -62,6 +62,14 @@ const withoutDirtyWater = evaluate(fullConnections.filter((item) => item.id !== 
 assert(!withoutDirtyWater.progress.completed_recipes.sink_dirty_water, "Missing Dirty Water handling should not complete sink recipe.");
 assert(!withoutDirtyWater.progress.produced_resources.basic_iron_output, "Blocked Dirty Water should prevent Basic Iron Output.");
 
+const staleDirtyWaterTarget = evaluate(
+  fullConnections.map((item) =>
+    item.id === "washer_to_sink_dirty_water" ? { ...item, target_runtime_machine_id: "missing_sink_1" } : item,
+  ),
+);
+assert(!staleDirtyWaterTarget.progress.completed_recipes.sink_dirty_water, "Stale Dirty Water target should not complete sink recipe.");
+assert(!staleDirtyWaterTarget.progress.produced_resources.basic_iron_output, "Stale Dirty Water target should block Basic Iron Output.");
+
 const withoutProcessorInput = evaluate(fullConnections.filter((item) => item.id !== "washer_to_processor_solid"));
 assert(!withoutProcessorInput.progress.produced_resources.basic_iron_output, "Missing processor route should not produce basic_iron_output.");
 
