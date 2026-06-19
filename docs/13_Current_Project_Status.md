@@ -10,33 +10,33 @@ React Flow prototype.
 
 ## Current Phase
 
-Task 0007 local runtime diagnostics ready for review.
+Task 0008 React Flow diagnostics prototype shell ready for review.
 
 ## Current Task
 
-Task ID: 0007
+Task ID: 0008
 
-Task Title: Local Runtime Diagnostics
+Task Title: React Flow Diagnostics Prototype Shell
 
 Status: Ready for Review
 
 ## Last Accepted Task
 
-Task ID: 0006
+Task ID: 0007
 
-Summary: Added minimal Slice 1 diagnostics catalog definitions and validator support.
+Summary: Added renderer-independent local runtime diagnostics for invalid connections and dirty water blockage.
 
-Commit: PR #9.
+Commit: PR #10.
 
 ## Next Candidate Tasks
 
-1. Review Task 0007 local runtime diagnostics.
-2. After acceptance, connect diagnostics presentation to the React Flow prototype.
-3. After UI diagnostics, implement graph repair interaction checks.
+1. Review Task 0008 React Flow diagnostics prototype shell.
+2. After acceptance, implement graph repair interaction checks.
+3. After graph repair checks, implement objective completion feedback.
 
 ## Current Blockers
 
-- Task 0007 requires director review before acceptance.
+- Task 0008 requires director review before acceptance.
 
 ## Active Decisions
 
@@ -48,14 +48,16 @@ Commit: PR #9.
 - Renderer-independent typed port compatibility accepted for Task 0004.
 - Slice 1 diagnostics schema and ownership accepted for Task 0005.
 - Slice 1 diagnostics catalog validation accepted for Task 0006.
+- Renderer-independent local runtime diagnostics accepted for Task 0007.
+- Minimal Vite React Flow prototype shell introduced for Task 0008.
 
 ## Drift Risks
 
 - Premature desktop stack decision.
 - Adding late-game materials before Slice 1.
 - Coupling production logic directly to React Flow components.
-- Letting local diagnostics become full production simulation.
-- Adding buffers, throughput, or scheduling before Slice 1 graph repair is proven.
+- Letting the prototype shell become a full app architecture before graph repair is proven.
+- Adding persistence, routing, or global state management before needed.
 
 ## Parking Lot Highlights
 
@@ -64,4 +66,4 @@ Commit: PR #9.
 
 ## Next Director Action
 
-Review Task 0007 local runtime diagnostics.
+Review Task 0008 React Flow diagnostics prototype shell.
