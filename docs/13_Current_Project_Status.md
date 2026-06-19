@@ -10,33 +10,33 @@ React Flow prototype.
 
 ## Current Phase
 
-Task 0004 implementation ready for review.
+Task 0005 diagnostics design ready for review.
 
 ## Current Task
 
-Task ID: 0004
+Task ID: 0005
 
-Task Title: Typed Port Compatibility
+Task Title: Slice 1 Diagnostics Schema and Ownership
 
 Status: Ready for Review
 
 ## Last Accepted Task
 
-Task ID: 0003
+Task ID: 0004
 
-Summary: Added dependency-free Slice 1 catalog loading and validation for resources, machines, ports, recipes, and objectives.
+Summary: Added renderer-independent typed port compatibility checks and Slice 1 compatibility validation cases.
 
-Commit: PR #6.
+Commit: PR #7.
 
 ## Next Candidate Tasks
 
-1. Review Task 0004 typed port compatibility.
-2. After acceptance, design minimal Slice 1 diagnostics schema and ownership.
-3. After diagnostics design, implement local diagnostics for invalid connections and dirty water blockage.
+1. Review Task 0005 diagnostics schema and ownership design.
+2. After acceptance, add minimal diagnostics catalog and validator support.
+3. After diagnostics catalog support, implement local diagnostics for invalid connections and dirty water blockage.
 
 ## Current Blockers
 
-- Task 0004 requires director review before acceptance.
+- Task 0005 requires director review before acceptance.
 
 ## Active Decisions
 
@@ -47,14 +47,15 @@ Commit: PR #6.
   - crusher input accepts only `iron_ore`;
   - Basic Iron Certification requires completing `sink_dirty_water`.
 - Slice 1 catalog validation accepted for Task 0003.
+- Renderer-independent typed port compatibility accepted for Task 0004.
 
 ## Drift Risks
 
 - Premature desktop stack decision.
 - Adding late-game materials before Slice 1.
 - Coupling production logic directly to React Flow components.
-- Letting typed port compatibility become full graph editing or production simulation.
-- Adding diagnostics schema without a bounded Slice 1 design decision.
+- Letting diagnostics design become full diagnostics framework.
+- Adding React Flow-specific diagnostic state before domain ownership is clear.
 
 ## Parking Lot Highlights
 
@@ -63,4 +64,4 @@ Commit: PR #6.
 
 ## Next Director Action
 
-Review Task 0004 typed port compatibility.
+Review Task 0005 diagnostics schema and ownership design.
