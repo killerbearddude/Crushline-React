@@ -9,7 +9,10 @@ const files = {
   machines: "catalog/slice1_machines.json",
   recipes: "catalog/slice1_recipes.json",
   objectives: "catalog/slice1_objectives.json",
+  diagnostics: "catalog/slice1_diagnostics.json",
 };
+
+const allowedDiagnosticSeverities = new Set(["blocking", "warning", "info"]);
 
 const isObject = (value) => value !== null && typeof value === "object" && !Array.isArray(value);
 const isString = (value) => typeof value === "string" && value.length > 0;
@@ -24,6 +27,7 @@ export function loadSlice1Catalog() {
     machines: readJson(files.machines),
     recipes: readJson(files.recipes),
     objectives: readJson(files.objectives),
+    diagnostics: readJson(files.diagnostics),
   };
 }
 
@@ -112,17 +116,43 @@ function validateRequirement(requirement, objectiveId, position, resourceIds, re
   errors.push(`${label}: unsupported requirement kind "${requirement.kind}".`);
 }
 
+function validateDiagnostic(diagnostic, position, errors) {
+  const id = isObject(diagnostic) && isString(diagnostic.id) ? diagnostic.id : `<missing id at ${position}>`;
+  const label = `diagnostics:${id}`;
+
+  if (!isObject(diagnostic)) {
+    errors.push(`diagnostics[${position}]: expected object.`);
+    return;
+  }
+
+  for (const key of ["id", "severity", "title", "message", "repair_hint"]) {
+    if (!isString(diagnostic[key])) {
+      errors.push(`${label}: missing non-empty string ${key}.`);
+    }
+  }
+
+  if (isString(diagnostic.severity) && !allowedDiagnosticSeverities.has(diagnostic.severity)) {
+    errors.push(`${label}: unsupported severity "${diagnostic.severity}".`);
+  }
+
+  if (diagnostic.condition !== undefined) {
+    errors.push(`${label}: must not define executable condition logic.`);
+  }
+}
+
 export function validateSlice1Catalog(catalog) {
   const errors = [];
   const resources = arraySection(catalog.resources, "resources", errors);
   const machines = arraySection(catalog.machines, "machines", errors);
   const recipes = arraySection(catalog.recipes, "recipes", errors);
   const objectives = arraySection(catalog.objectives, "objectives", errors);
+  const diagnostics = arraySection(catalog.diagnostics, "diagnostics", errors);
 
   const resourceIds = new Set(indexById(resources, "resources", errors).keys());
   const machineIndex = indexById(machines, "machines", errors);
   const recipeIndex = indexById(recipes, "recipes", errors);
   indexById(objectives, "objectives", errors);
+  indexById(diagnostics, "diagnostics", errors);
 
   const machineClasses = new Set();
   for (const machine of machineIndex.values()) {
@@ -158,6 +188,8 @@ export function validateSlice1Catalog(catalog) {
     );
   }
 
+  diagnostics.forEach((diagnostic, position) => validateDiagnostic(diagnostic, position, errors));
+
   return errors;
 }
 
@@ -178,6 +210,24 @@ function selfTest(catalog) {
   missingMachineClass.recipes.recipes[0].machine_class = "missing_machine_class_for_test";
   if (!validateSlice1Catalog(missingMachineClass).some((error) => error.includes("missing_machine_class_for_test"))) {
     failures.push("missing machine class reference was not detected");
+  }
+
+  const duplicateDiagnostic = clone(catalog);
+  duplicateDiagnostic.diagnostics.diagnostics.push({ ...duplicateDiagnostic.diagnostics.diagnostics[0] });
+  if (!validateSlice1Catalog(duplicateDiagnostic).some((error) => error.includes("duplicate id"))) {
+    failures.push("duplicate diagnostic id was not detected");
+  }
+
+  const badDiagnosticSeverity = clone(catalog);
+  badDiagnosticSeverity.diagnostics.diagnostics[0].severity = "critical_for_test";
+  if (!validateSlice1Catalog(badDiagnosticSeverity).some((error) => error.includes("critical_for_test"))) {
+    failures.push("invalid diagnostic severity was not detected");
+  }
+
+  const missingDiagnosticText = clone(catalog);
+  delete missingDiagnosticText.diagnostics.diagnostics[0].repair_hint;
+  if (!validateSlice1Catalog(missingDiagnosticText).some((error) => error.includes("repair_hint"))) {
+    failures.push("missing diagnostic repair_hint was not detected");
   }
 
   return failures;
@@ -203,7 +253,7 @@ function main() {
   }
 
   console.log(
-    `Slice 1 catalog validation passed: ${catalog.resources.resources.length} resources, ${catalog.machines.machines.length} machines, ${catalog.recipes.recipes.length} recipes, ${catalog.objectives.objectives.length} objective.`,
+    `Slice 1 catalog validation passed: ${catalog.resources.resources.length} resources, ${catalog.machines.machines.length} machines, ${catalog.recipes.recipes.length} recipes, ${catalog.objectives.objectives.length} objective, ${catalog.diagnostics.diagnostics.length} diagnostics.`,
   );
 }
 
