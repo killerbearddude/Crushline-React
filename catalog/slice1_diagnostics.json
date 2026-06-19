@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "diagnostics": [
+    {
+      "id": "invalid_connection",
+      "severity": "blocking",
+      "title": "Invalid connection",
+      "message": "These ports are not compatible.",
+      "repair_hint": "Connect an output port to a compatible input port."
+    },
+    {
+      "id": "missing_required_input",
+      "severity": "blocking",
+      "title": "Required input missing",
+      "message": "This machine cannot run because a required input is missing.",
+      "repair_hint": "Connect the required input port."
+    },
+    {
+      "id": "missing_power_input",
+      "severity": "blocking",
+      "title": "Power input missing",
+      "message": "This machine cannot run because it does not have Power.",
+      "repair_hint": "Connect Power from a Basic Generator."
+    },
+    {
+      "id": "dirty_water_output_blocked",
+      "severity": "blocking",
+      "title": "Dirty Water output blocked",
+      "message": "The Washer cannot continue because Dirty Water has nowhere to go.",
+      "repair_hint": "Connect Dirty Water Output to a Waste Sink."
+    },
+    {
+      "id": "objective_requirement_incomplete",
+      "severity": "info",
+      "title": "Objective requirement incomplete",
+      "message": "This objective still has an incomplete requirement.",
+      "repair_hint": "Complete the listed requirement."
+    }
+  ]
+}
