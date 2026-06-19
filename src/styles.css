@@ -119,8 +119,22 @@ body {
   line-height: 1.45;
 }
 
+.diagnostic .diagnostic-summary {
+  margin-bottom: 8px;
+}
+
+.diagnostic .diagnostic-repair {
+  border-left: 3px solid rgba(128, 255, 180, 0.3);
+  border-radius: 6px;
+  padding: 8px 10px;
+  background: rgba(128, 255, 180, 0.08);
+  color: #e8ffef;
+}
+
 .diagnostic small {
+  display: inline-block;
   color: #9eabc5;
+  font-size: 0.75rem;
 }
 
 .objective-panel {
@@ -182,7 +196,12 @@ body {
   display: grid;
   gap: 4px;
   min-width: 150px;
+  cursor: grab;
   text-align: left;
+}
+
+.react-flow__node:active .machine-node {
+  cursor: grabbing;
 }
 
 .machine-node span {
