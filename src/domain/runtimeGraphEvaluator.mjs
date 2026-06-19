@@ -72,10 +72,23 @@ function hasIncomingResource(catalog, graph, targetRuntimeId, resourceId, produc
   });
 }
 
+function hasHandledBlockingOutputs(catalog, graph, runtimeMachine, recipe) {
+  return recipeOutputs(recipe)
+    .filter((output) => output.blocks_if_full === true)
+    .every((output) =>
+      compatibleRuntimeConnections(catalog, graph).some(
+        (connection) =>
+          connectionSourceRuntimeId(connection) === runtimeMachine.id && connection.resource_id === output.resource_id,
+      ),
+    );
+}
+
 function canRunRecipe(catalog, graph, recipe, runtimeMachine, producedByRuntimeMachine, externalResources) {
-  return recipeInputs(recipe).every((input) =>
+  const hasInputs = recipeInputs(recipe).every((input) =>
     hasIncomingResource(catalog, graph, runtimeMachine.id, input.resource_id, producedByRuntimeMachine, externalResources),
   );
+
+  return hasInputs && hasHandledBlockingOutputs(catalog, graph, runtimeMachine, recipe);
 }
 
 function addRecipeProgress(progress, recipe) {
