@@ -35,6 +35,34 @@ Record important project decisions here.
 
 ## Decisions
 
+## 2026-06-19 — Slice 1 Prototype Checkpoint Frozen
+
+### Decision
+
+Slice 1 is accepted and frozen as a React Flow prototype checkpoint.
+
+### Context
+
+Task 0020 full local playtest passed per director report. Task 0021 final Slice 1 status review accepted the prototype checkpoint and recommended freezing the checkpoint before choosing the next phase.
+
+### Options Considered
+
+1. Freeze the Slice 1 prototype checkpoint.
+2. Continue adding implementation features before checkpointing.
+3. Start UI redesign immediately from the uploaded reference image.
+
+### Reasoning
+
+The current prototype proves the minimum Slice 1 loop: machine placement, movement, typed ports, compatible connections, incompatible rejection, Dirty Water pressure, graph repair, local diagnostics, evaluator-derived objective completion, and responsive interaction for the current prototype. Freezing the checkpoint prevents drift before choosing the next phase.
+
+### Consequences
+
+The project may now choose a next phase explicitly: UI direction capture, focused polish, or the next gameplay slice. This decision does not approve save/load, persistence, generic deletion, inventory, costs, production timing, broad graph editor behavior, or UI redesign.
+
+### Revisit Trigger
+
+Revisit if a future task discovers that the accepted Slice 1 checkpoint no longer runs locally or fails its recorded full playtest expectations.
+
 ## 2026-06-18 — Repository Is Source of Truth
 
 ### Decision
