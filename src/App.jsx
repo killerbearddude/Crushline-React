@@ -9,6 +9,7 @@ import recipesCatalog from "../catalog/slice1_recipes.json";
 import resourcesCatalog from "../catalog/slice1_resources.json";
 import { diagnoseLocalGraph } from "./domain/localDiagnostics.mjs";
 import { evaluateObjectives } from "./domain/objectiveProgress.mjs";
+import { evaluateRuntimeGraph } from "./domain/runtimeGraphEvaluator.mjs";
 
 const catalog = {
   resources: resourcesCatalog,
@@ -24,23 +25,61 @@ const initialPrototypeGraph = {
     { id: "crusher_1", catalog_machine_id: "crusher" },
     { id: "washer_1", catalog_machine_id: "washer" },
     { id: "waste_sink_1", catalog_machine_id: "waste_sink" },
+    { id: "processor_1", catalog_machine_id: "basic_processor" },
   ],
+  external_resources: ["coal", "iron_ore", "water"],
   connections: [
     {
       id: "invalid_power_to_solid",
       source_runtime_machine_id: "generator_1",
       source_machine_id: "basic_generator",
       source_port_id: "power_output",
+      target_runtime_machine_id: "crusher_1",
       target_machine_id: "crusher",
       target_port_id: "solid_input",
       resource_id: "power",
     },
+    {
+      id: "generator_power_to_washer",
+      source_runtime_machine_id: "generator_1",
+      source_machine_id: "basic_generator",
+      source_port_id: "power_output",
+      target_runtime_machine_id: "washer_1",
+      target_machine_id: "washer",
+      target_port_id: "power_input",
+      resource_id: "power",
+    },
+    {
+      id: "generator_power_to_processor",
+      source_runtime_machine_id: "generator_1",
+      source_machine_id: "basic_generator",
+      source_port_id: "power_output",
+      target_runtime_machine_id: "processor_1",
+      target_machine_id: "basic_processor",
+      target_port_id: "power_input",
+      resource_id: "power",
+    },
+    {
+      id: "crusher_to_washer_solid",
+      source_runtime_machine_id: "crusher_1",
+      source_machine_id: "crusher",
+      source_port_id: "solid_output",
+      target_runtime_machine_id: "washer_1",
+      target_machine_id: "washer",
+      target_port_id: "solid_input",
+      resource_id: "crushed_iron_ore",
+    },
+    {
+      id: "washer_to_processor_solid",
+      source_runtime_machine_id: "washer_1",
+      source_machine_id: "washer",
+      source_port_id: "solid_output",
+      target_runtime_machine_id: "processor_1",
+      target_machine_id: "basic_processor",
+      target_port_id: "solid_input",
+      resource_id: "washed_iron_ore",
+    },
   ],
-};
-
-const emptyObjectiveProgress = {
-  produced_resources: {},
-  completed_recipes: {},
 };
 
 const repairedPowerConnection = {
@@ -48,6 +87,7 @@ const repairedPowerConnection = {
   source_runtime_machine_id: "generator_1",
   source_machine_id: "basic_generator",
   source_port_id: "power_output",
+  target_runtime_machine_id: "crusher_1",
   target_machine_id: "crusher",
   target_port_id: "power_input",
   resource_id: "power",
@@ -58,6 +98,7 @@ const dirtyWaterHandlingConnection = {
   source_runtime_machine_id: "washer_1",
   source_machine_id: "washer",
   source_port_id: "dirty_water_output",
+  target_runtime_machine_id: "waste_sink_1",
   target_machine_id: "waste_sink",
   target_port_id: "waste_input",
   resource_id: "dirty_water",
@@ -68,6 +109,7 @@ const nodePositions = {
   crusher_1: { x: 260, y: 60 },
   washer_1: { x: 520, y: 60 },
   waste_sink_1: { x: 520, y: 260 },
+  processor_1: { x: 780, y: 60 },
 };
 
 const displayNames = new Map(catalog.machines.machines.map((machine) => [machine.id, machine.display_name]));
@@ -114,7 +156,7 @@ function graphEdges(graph) {
   return graph.connections.map((connection) => ({
     id: connection.id,
     source: connection.source_runtime_machine_id,
-    target: connection.target_machine_id === "crusher" ? "crusher_1" : "waste_sink_1",
+    target: connection.target_runtime_machine_id,
     label: `${connection.source_port_id} → ${connection.target_port_id}`,
     animated: connection.id === "invalid_power_to_solid",
   }));
@@ -129,21 +171,11 @@ function addConnectionOnce(connections, connectionToAdd) {
   return [...connections, connectionToAdd];
 }
 
-function incrementProgress(progress, collectionName, id) {
-  return {
-    ...progress,
-    [collectionName]: {
-      ...progress[collectionName],
-      [id]: (progress[collectionName][id] ?? 0) + 1,
-    },
-  };
-}
-
 export default function App() {
   const [graph, setGraph] = useState(initialPrototypeGraph);
-  const [objectiveProgress, setObjectiveProgress] = useState(emptyObjectiveProgress);
   const diagnostics = useMemo(() => diagnoseLocalGraph(catalog, graph), [graph]);
-  const objectives = useMemo(() => evaluateObjectives(catalog, objectiveProgress), [objectiveProgress]);
+  const evaluatorResult = useMemo(() => evaluateRuntimeGraph(catalog, graph), [graph]);
+  const objectives = useMemo(() => evaluateObjectives(catalog, evaluatorResult.progress), [evaluatorResult]);
   const basicIronObjective = objectives.find((objective) => objective.objective_id === "basic_iron_certification");
   const nodes = useMemo(() => graphNodes(graph, diagnostics), [graph, diagnostics]);
   const edges = useMemo(() => graphEdges(graph), [graph]);
@@ -162,19 +194,7 @@ export default function App() {
     }));
   };
 
-  const recordDirtyWaterHandled = () => {
-    setObjectiveProgress((progress) => incrementProgress(progress, "completed_recipes", "sink_dirty_water"));
-  };
-
-  const recordBasicIronOutput = () => {
-    setObjectiveProgress((progress) => incrementProgress(progress, "produced_resources", "basic_iron_output"));
-  };
-
-  const resetGraph = () => {
-    setGraph(initialPrototypeGraph);
-    setObjectiveProgress(emptyObjectiveProgress);
-  };
-
+  const resetGraph = () => setGraph(initialPrototypeGraph);
   const hasInvalidConnectionDiagnostic = hasDiagnostic(diagnostics, "invalid_connection");
   const hasDirtyWaterDiagnostic = hasDiagnostic(diagnostics, "dirty_water_output_blocked");
 
@@ -201,19 +221,13 @@ export default function App() {
           <button type="button" onClick={connectDirtyWaterHandling} disabled={!hasDirtyWaterDiagnostic}>
             Connect Dirty Water to Waste Sink
           </button>
-          <button type="button" onClick={recordDirtyWaterHandled} disabled={diagnostics.length > 0}>
-            Record Dirty Water sink run
-          </button>
-          <button type="button" onClick={recordBasicIronOutput} disabled={diagnostics.length > 0}>
-            Record Basic Iron Output
-          </button>
           <button type="button" onClick={resetGraph}>
             Reset prototype
           </button>
         </div>
 
         {diagnostics.length === 0 ? (
-          <p className="all-clear">No active diagnostics. Graph repair checks passed.</p>
+          <p className="all-clear">No active diagnostics. Runtime evaluator can derive route progress.</p>
         ) : (
           <ul>
             {diagnostics.map((diagnostic, index) => {
