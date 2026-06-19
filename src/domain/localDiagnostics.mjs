@@ -86,6 +86,15 @@ export function diagnoseGraphConnections(catalog, graph) {
   return diagnostics;
 }
 
+function isCompatibleDirtyWaterHandlingConnection(catalog, runtimeMachine, connection) {
+  return (
+    connectionSourceMachineId(connection) === runtimeMachine.id &&
+    connection.source_port_id === "dirty_water_output" &&
+    connection.resource_id === "dirty_water" &&
+    checkPortCompatibility(catalog, connection).compatible
+  );
+}
+
 export function diagnoseDirtyWaterBlockage(catalog, graph) {
   const diagnostics = [];
   const catalogMachines = machinesById(catalog);
@@ -96,11 +105,8 @@ export function diagnoseDirtyWaterBlockage(catalog, graph) {
     const catalogMachine = catalogMachines.get(catalogMachineId);
     if (!catalogMachine || catalogMachine.machine_class !== "washer") continue;
 
-    const hasDirtyWaterHandling = connections.some(
-      (connection) =>
-        connectionSourceMachineId(connection) === runtimeMachine.id &&
-        connection.source_port_id === "dirty_water_output" &&
-        connection.resource_id === "dirty_water",
+    const hasDirtyWaterHandling = connections.some((connection) =>
+      isCompatibleDirtyWaterHandlingConnection(catalog, runtimeMachine, connection),
     );
 
     if (hasDirtyWaterHandling) continue;
