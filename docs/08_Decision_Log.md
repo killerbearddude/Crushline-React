@@ -101,3 +101,31 @@ Catalog, evaluator, resources, machines, recipes, and objectives should remain p
 ### Revisit Trigger
 
 Revisit only if a deliberate architecture decision chooses a coupled prototype for speed.
+
+## 2026-06-18 — Minimal Vite React Flow Prototype Shell
+
+### Decision
+
+Use a minimal Vite React app with React Flow for the Slice 1 prototype shell.
+
+### Context
+
+The repository source-of-truth already selected React Flow as the active prototype path, but the repo did not yet contain a React app scaffold. Task 0008 needs a renderer shell to present local diagnostics without moving production meaning into React components.
+
+### Options Considered
+
+1. Continue with domain-only scripts and postpone UI.
+2. Add a minimal Vite React Flow shell.
+3. Add a larger app architecture with routing, persistence, and state management.
+
+### Reasoning
+
+The minimal shell is the smallest implementation that advances Slice 1 UI validation while preserving renderer-independent production logic. A larger app architecture would add premature structure and drift risk.
+
+### Consequences
+
+The repo gains npm scripts and dependencies for the active prototype path. UI work may now proceed in small tasks that consume domain helpers instead of owning production meaning.
+
+### Revisit Trigger
+
+Revisit after Slice 1 playability is stable or if the Vite React Flow shell blocks Slice 1 acceptance criteria.
