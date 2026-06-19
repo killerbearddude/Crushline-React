@@ -1,4 +1,4 @@
-Status: Appoved
+Status: Accepted
 
 # Task 0005 — Slice 1 Diagnostics Schema and Ownership
 
