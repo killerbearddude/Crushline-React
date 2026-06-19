@@ -10,45 +10,45 @@ React Flow prototype.
 
 ## Current Phase
 
-Task 0019 minimal machine placement interaction ready for review.
+Task 0020 full Slice 1 interaction playtest ready for review.
 
 ## Current Task
 
-Task ID: 0019
+Task ID: 0020
 
-Task Title: Minimal Machine Placement Interaction
+Task Title: Full Slice 1 Interaction Playtest
 
 Status: Ready for Review
 
 ## Last Accepted Task
 
-Task ID: 0018
+Task ID: 0019
 
-Summary: Interaction checklist review accepted minimal machine placement as the next bounded Slice 1 task.
+Summary: Added current-session machine placement from existing Slice 1 catalog machine IDs.
 
-Commit: PR #21.
+Commit: PR #22.
 
 ## Next Candidate Tasks
 
-1. Review Task 0019 minimal machine placement interaction.
-2. Run local validation for placement, dragging, connection attempts, reset, and objective flow.
-3. After acceptance, run a full Slice 1 interaction/playtest pass.
+1. Execute the Task 0020 full local playtest.
+2. Record findings in the Task 0020 notes artifact.
+3. After findings, decide whether Slice 1 needs one final focused fix or a final status review.
 
 ## Current Blockers
 
-- Task 0019 requires director review and local browser validation.
+- Task 0020 requires director local execution before final Slice 1 status can be determined.
 
 ## Active Decisions
 
 - Repository is source of truth.
 - React Flow remains active prototype path.
 - Production domain must remain renderer-independent.
-- Tasks 0002 through 0018 are accepted.
+- Tasks 0002 through 0019 are accepted.
 
 ## Drift Risks
 
-- Expanding minimal placement into a broad graph editor.
-- Adding save/load or persistence before Slice 1 interaction flow is stable.
+- Adding save/load or persistence before confirming the current Slice 1 interaction loop.
+- Expanding into broad graph editor behavior before the full playtest findings are known.
 - Treating the uploaded prototype image as source of truth without a repo decision.
 
 ## Parking Lot Highlights
@@ -58,4 +58,4 @@ Commit: PR #21.
 
 ## Next Director Action
 
-Review Task 0019 and validate minimal placement locally.
+Run the Task 0020 full local playtest and record findings.
