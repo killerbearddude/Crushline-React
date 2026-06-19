@@ -45,6 +45,42 @@ body {
   font-size: 1.6rem;
 }
 
+.repair-actions {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.repair-actions button {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #f5f7fb;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.repair-actions button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.repair-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.all-clear {
+  border: 1px solid rgba(128, 255, 180, 0.28);
+  border-radius: 14px;
+  margin: 0;
+  padding: 16px;
+  background: rgba(67, 184, 118, 0.12);
+  color: #b9ffd1;
+  line-height: 1.45;
+}
+
 .diagnostics-panel ul {
   display: grid;
   gap: 16px;

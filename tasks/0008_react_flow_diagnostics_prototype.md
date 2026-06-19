@@ -1,4 +1,4 @@
-Status: Ready for Review
+Status: Accepted
 
 # Task 0008 — React Flow Diagnostics Prototype Shell
 

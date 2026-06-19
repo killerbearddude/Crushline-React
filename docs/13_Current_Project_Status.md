@@ -10,33 +10,33 @@ React Flow prototype.
 
 ## Current Phase
 
-Task 0008 React Flow diagnostics prototype shell ready for review.
+Task 0009 graph repair interaction checks ready for review.
 
 ## Current Task
 
-Task ID: 0008
+Task ID: 0009
 
-Task Title: React Flow Diagnostics Prototype Shell
+Task Title: Graph Repair Interaction Checks
 
 Status: Ready for Review
 
 ## Last Accepted Task
 
-Task ID: 0007
+Task ID: 0008
 
-Summary: Added renderer-independent local runtime diagnostics for invalid connections and dirty water blockage.
+Summary: Added minimal Vite React Flow prototype shell that displays domain-generated local diagnostics.
 
-Commit: PR #10.
+Commit: PR #11.
 
 ## Next Candidate Tasks
 
-1. Review Task 0008 React Flow diagnostics prototype shell.
-2. After acceptance, implement graph repair interaction checks.
-3. After graph repair checks, implement objective completion feedback.
+1. Review Task 0009 graph repair interaction checks.
+2. After acceptance, implement objective completion feedback.
+3. After objective feedback, run Slice 1 playtest checklist review.
 
 ## Current Blockers
 
-- Task 0008 requires director review before acceptance.
+- Task 0009 requires director review before acceptance.
 
 ## Active Decisions
 
@@ -49,15 +49,15 @@ Commit: PR #10.
 - Slice 1 diagnostics schema and ownership accepted for Task 0005.
 - Slice 1 diagnostics catalog validation accepted for Task 0006.
 - Renderer-independent local runtime diagnostics accepted for Task 0007.
-- Minimal Vite React Flow prototype shell introduced for Task 0008.
+- Minimal Vite React Flow prototype shell accepted for Task 0008.
 
 ## Drift Risks
 
 - Premature desktop stack decision.
 - Adding late-game materials before Slice 1.
 - Coupling production logic directly to React Flow components.
-- Letting the prototype shell become a full app architecture before graph repair is proven.
-- Adding persistence, routing, or global state management before needed.
+- Letting graph repair checks become a full graph editor.
+- Adding persistence, routing, or production simulation before objective completion feedback.
 
 ## Parking Lot Highlights
 
@@ -66,4 +66,4 @@ Commit: PR #10.
 
 ## Next Director Action
 
-Review Task 0008 React Flow diagnostics prototype shell.
+Review Task 0009 graph repair interaction checks.
