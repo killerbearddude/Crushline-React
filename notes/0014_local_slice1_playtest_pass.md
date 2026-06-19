@@ -1,0 +1,216 @@
+# Task 0014 — Local Slice 1 Playtest Pass
+
+## Purpose
+
+This artifact defines the local manual playtest pass for the current Slice 1 React Flow prototype. It is a script and findings template, not a claim that the playtest has already been executed.
+
+## Source Files
+
+- `docs/00_Project_Brief.md`
+- `docs/03_Slice_1_Target.md`
+- `docs/04_Technical_Architecture.md`
+- `docs/05_Production_Domain_Model.md`
+- `docs/09_Drift_Guard.md`
+- `docs/10_Test_and_Playtest_Checklist.md`
+- `src/App.jsx`
+- `src/domain/localDiagnostics.mjs`
+- `src/domain/runtimeGraphEvaluator.mjs`
+- `src/domain/objectiveProgress.mjs`
+
+## Local Setup
+
+Run from the repository root:
+
+```bash
+git pull origin main
+npm install
+npm run build
+npm run validate:catalog
+npm run check:ports
+npm run check:diagnostics
+npm run check:objectives
+npm run check:evaluator
+npm run dev
+```
+
+Open the local Vite URL printed by `npm run dev`.
+
+## Expected Prototype Flow
+
+### Initial State
+
+Expected:
+
+- Graph displays Basic Generator, Crusher, Washer, Waste Sink, and Basic Processor.
+- Local Diagnostics panel shows an invalid power connection diagnostic.
+- Local Diagnostics panel shows a Dirty Water blockage diagnostic.
+- Basic Iron Certification is incomplete.
+- There are no manual objective-progress buttons.
+
+Observed:
+
+- [ ] Pass
+- [ ] Fail
+- Notes:
+
+### Repair Invalid Power Connection
+
+Action:
+
+- Click `Repair invalid power connection`.
+
+Expected:
+
+- Invalid connection diagnostic disappears.
+- Dirty Water blockage diagnostic remains.
+- Basic Iron Certification remains incomplete.
+
+Observed:
+
+- [ ] Pass
+- [ ] Fail
+- Notes:
+
+### Connect Dirty Water Handling
+
+Action:
+
+- Click `Connect Dirty Water to Waste Sink`.
+
+Expected:
+
+- Dirty Water blockage diagnostic disappears.
+- No active diagnostics remain.
+- Runtime evaluator derives route progress.
+- Basic Iron Certification becomes complete.
+
+Observed:
+
+- [ ] Pass
+- [ ] Fail
+- Notes:
+
+### Reset Prototype
+
+Action:
+
+- Click `Reset prototype`.
+
+Expected:
+
+- Initial diagnostics return.
+- Basic Iron Certification becomes incomplete again.
+- Graph remains readable.
+
+Observed:
+
+- [ ] Pass
+- [ ] Fail
+- Notes:
+
+## Checklist Findings
+
+### Graph Interaction
+
+| Question | Pass/Fail | Notes |
+|---|---|---|
+| Can the player move a machine? |  |  |
+| Does dragging feel responsive? |  |  |
+| Does the graph remain readable after interaction? |  |  |
+| Can the player repair the invalid connection through the prototype control? |  |  |
+| Can the player repair Dirty Water through the prototype control? |  |  |
+
+Known not-yet-proven items:
+
+- Player-driven machine placement.
+- Player drag-to-connect compatible ports.
+- Player drag-to-connect incompatible port rejection.
+- Generic connection deletion.
+
+### Production / Evaluator Feedback
+
+| Question | Pass/Fail | Notes |
+|---|---|---|
+| Does fixing the power route allow the evaluator to advance the iron route? |  |  |
+| Does Dirty Water handling gate Basic Iron completion? |  |  |
+| Does the final output complete Basic Iron Certification through evaluator facts? |  |  |
+| Is completion feedback clear without manual objective buttons? |  |  |
+
+### Diagnostics
+
+| Question | Pass/Fail | Notes |
+|---|---|---|
+| Are diagnostics local to the relevant issue? |  |  |
+| Is the invalid connection explanation understandable? |  |  |
+| Is the Dirty Water blockage explanation understandable? |  |  |
+| Do diagnostics disappear when repaired? |  |  |
+| Does the UI clearly show all-clear state? |  |  |
+
+### Feel / Readability
+
+| Question | Pass/Fail | Notes |
+|---|---|---|
+| Is the prototype readable at normal browser size? |  |  |
+| Is the side panel understandable? |  |  |
+| Are repair buttons discoverable? |  |  |
+| Does objective completion feel clear enough for Slice 1 continuation? |  |  |
+
+### Regression Checks
+
+| Question | Pass/Fail | Notes |
+|---|---|---|
+| `npm run build` passes locally. |  |  |
+| Catalog validation passes. |  |  |
+| Port compatibility checks pass. |  |  |
+| Local diagnostics checks pass. |  |  |
+| Objective checks pass. |  |  |
+| Runtime evaluator checks pass. |  |  |
+| No new machines were added. |  |  |
+| No new resources were added. |  |  |
+| Production logic remains outside React components. |  |  |
+
+## Playtest Result
+
+Select one after local execution:
+
+- [ ] Accept current Slice 1 prototype checkpoint.
+- [ ] Accept with notes and proceed to the next focused interaction task.
+- [ ] Revise current prototype before proceeding.
+- [ ] Split findings into multiple implementation tasks.
+
+## Recommended Next Task Conversion
+
+If the playtest passes the current prototype controls but confirms the known interaction gaps, create the next implementation task as:
+
+**Task 0015 — Minimal Player Connection Interaction**
+
+Recommended goal:
+
+Add the smallest React Flow interaction that lets the player attempt a connection and receive compatible/incompatible feedback using existing domain compatibility and diagnostics helpers.
+
+Keep out of scope:
+
+- machine placement;
+- save/load;
+- persistence;
+- throughput;
+- buffers;
+- scheduling;
+- broad graph editor features;
+- new catalog content.
+
+## Notes From Local Run
+
+Date:
+
+Tester:
+
+Environment:
+
+Findings:
+
+1.
+2.
+3.
+
+Decision:
