@@ -1,0 +1,20 @@
+{
+  "name": "crushline-react",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "validate:catalog": "node scripts/validate-slice1-catalog.mjs",
+    "check:ports": "node scripts/check-slice1-port-compatibility.mjs",
+    "check:diagnostics": "node scripts/check-slice1-local-diagnostics.mjs"
+  },
+  "dependencies": {
+    "@xyflow/react": "^12.8.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "vite": "^7.0.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
+  }
+}
