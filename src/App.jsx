@@ -8,6 +8,7 @@ import objectivesCatalog from "../catalog/slice1_objectives.json";
 import recipesCatalog from "../catalog/slice1_recipes.json";
 import resourcesCatalog from "../catalog/slice1_resources.json";
 import { diagnoseLocalGraph } from "./domain/localDiagnostics.mjs";
+import { evaluateObjectives } from "./domain/objectiveProgress.mjs";
 
 const catalog = {
   resources: resourcesCatalog,
@@ -35,6 +36,11 @@ const initialPrototypeGraph = {
       resource_id: "power",
     },
   ],
+};
+
+const emptyObjectiveProgress = {
+  produced_resources: {},
+  completed_recipes: {},
 };
 
 const repairedPowerConnection = {
@@ -123,9 +129,22 @@ function addConnectionOnce(connections, connectionToAdd) {
   return [...connections, connectionToAdd];
 }
 
+function incrementProgress(progress, collectionName, id) {
+  return {
+    ...progress,
+    [collectionName]: {
+      ...progress[collectionName],
+      [id]: (progress[collectionName][id] ?? 0) + 1,
+    },
+  };
+}
+
 export default function App() {
   const [graph, setGraph] = useState(initialPrototypeGraph);
+  const [objectiveProgress, setObjectiveProgress] = useState(emptyObjectiveProgress);
   const diagnostics = useMemo(() => diagnoseLocalGraph(catalog, graph), [graph]);
+  const objectives = useMemo(() => evaluateObjectives(catalog, objectiveProgress), [objectiveProgress]);
+  const basicIronObjective = objectives.find((objective) => objective.objective_id === "basic_iron_certification");
   const nodes = useMemo(() => graphNodes(graph, diagnostics), [graph, diagnostics]);
   const edges = useMemo(() => graphEdges(graph), [graph]);
 
@@ -143,7 +162,19 @@ export default function App() {
     }));
   };
 
-  const resetGraph = () => setGraph(initialPrototypeGraph);
+  const recordDirtyWaterHandled = () => {
+    setObjectiveProgress((progress) => incrementProgress(progress, "completed_recipes", "sink_dirty_water"));
+  };
+
+  const recordBasicIronOutput = () => {
+    setObjectiveProgress((progress) => incrementProgress(progress, "produced_resources", "basic_iron_output"));
+  };
+
+  const resetGraph = () => {
+    setGraph(initialPrototypeGraph);
+    setObjectiveProgress(emptyObjectiveProgress);
+  };
+
   const hasInvalidConnectionDiagnostic = hasDiagnostic(diagnostics, "invalid_connection");
   const hasDirtyWaterDiagnostic = hasDiagnostic(diagnostics, "dirty_water_output_blocked");
 
@@ -170,8 +201,14 @@ export default function App() {
           <button type="button" onClick={connectDirtyWaterHandling} disabled={!hasDirtyWaterDiagnostic}>
             Connect Dirty Water to Waste Sink
           </button>
+          <button type="button" onClick={recordDirtyWaterHandled} disabled={diagnostics.length > 0}>
+            Record Dirty Water sink run
+          </button>
+          <button type="button" onClick={recordBasicIronOutput} disabled={diagnostics.length > 0}>
+            Record Basic Iron Output
+          </button>
           <button type="button" onClick={resetGraph}>
-            Reset prototype graph
+            Reset prototype
           </button>
         </div>
 
@@ -194,6 +231,25 @@ export default function App() {
             })}
           </ul>
         )}
+
+        {basicIronObjective ? (
+          <section className={`objective-panel ${basicIronObjective.complete ? "complete" : "incomplete"}`}>
+            <h2>{basicIronObjective.display_name}</h2>
+            <p>{basicIronObjective.description}</p>
+            <ul>
+              {basicIronObjective.requirements.map((requirement) => (
+                <li key={`${requirement.kind}-${requirement.resource_id ?? requirement.recipe_id}`}>
+                  <strong>{requirement.complete ? "Complete" : "Incomplete"}</strong>
+                  <span>{requirement.label}</span>
+                  <small>
+                    {requirement.current} / {requirement.required}
+                  </small>
+                </li>
+              ))}
+            </ul>
+            {basicIronObjective.complete ? <p className="certified">Basic Iron Certification complete.</p> : null}
+          </section>
+        ) : null}
       </aside>
     </main>
   );
