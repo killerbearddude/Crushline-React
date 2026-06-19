@@ -10,45 +10,45 @@ React Flow prototype.
 
 ## Current Phase
 
-Task 0015 prototype interaction and diagnostic readability fix ready for review.
+Task 0016 focused interaction playtest ready for review.
 
 ## Current Task
 
-Task ID: 0015
+Task ID: 0016
 
-Task Title: Prototype Interaction and Diagnostic Readability Fix
+Task Title: Focused Interaction Playtest
 
 Status: Ready for Review
 
 ## Last Accepted Task
 
-Task ID: 0014
+Task ID: 0015
 
-Summary: Local playtest found the repair/evaluator loop works, but node movement failed and invalid connection diagnostics were cluttered.
+Summary: Fixed focused local interaction and diagnostic readability issues from Task 0014.
 
-Commit: PR #17.
+Commit: PR #18.
 
 ## Next Candidate Tasks
 
-1. Review Task 0015 prototype interaction and diagnostic readability fix.
-2. After acceptance, rerun the focused local interaction playtest.
-3. If the focused pass succeeds, implement minimal player connection interaction.
+1. Execute the Task 0016 focused local playtest.
+2. Record findings in the Task 0016 notes artifact.
+3. If accepted, implement minimal player connection interaction.
 
 ## Current Blockers
 
-- Task 0015 requires director review and local validation.
+- Task 0016 requires director local execution before proceeding to player connection interaction.
 
 ## Active Decisions
 
 - Repository is source of truth.
 - React Flow remains active prototype path.
 - Production domain must remain renderer-independent.
-- Tasks 0002 through 0014 are accepted.
+- Tasks 0002 through 0015 are accepted.
 
 ## Drift Risks
 
-- Expanding from local node movement into full graph editor behavior.
 - Adding machine placement and drag-to-connect in one large task.
+- Expanding minimal connection interaction into a broad graph editor.
 - Treating the uploaded prototype image as source of truth without a repo decision.
 
 ## Parking Lot Highlights
@@ -58,4 +58,4 @@ Commit: PR #17.
 
 ## Next Director Action
 
-Review Task 0015 and validate node dragging plus invalid diagnostic readability locally.
+Run the Task 0016 focused local playtest and record findings.
